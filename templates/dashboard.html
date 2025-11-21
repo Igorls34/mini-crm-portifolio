@@ -4,6 +4,21 @@
 {% block title %}Dashboard - CRM{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
 
+{% block extra_css %}
+<style>
+body {
+    background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+.main-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    min-height: 100vh;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-grid fade-in">
     <div class="stat-card text-white bg-primary dashboard-card">
