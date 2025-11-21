@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-key')
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,0.0.0.0,.railway.app').split(',')
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
 
 # APPS
 INSTALLED_APPS = [
