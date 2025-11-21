@@ -5,37 +5,29 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-users"></i> Total de Leads</h5>
-                <h2>{{ total_leads }}</h2>
-            </div>
+<div class="dashboard-grid fade-in">
+    <div class="stat-card text-white bg-primary dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-users"></i> Total de Leads</h5>
+            <h2>{{ total_leads }}</h2>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-plus"></i> Novos</h5>
-                <h2>{{ novos }}</h2>
-            </div>
+    <div class="stat-card text-white bg-info dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-plus"></i> Novos</h5>
+            <h2>{{ novos }}</h2>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-spinner"></i> Em Progresso</h5>
-                <h2>{{ progresso }}</h2>
-            </div>
+    <div class="stat-card text-white bg-warning dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-spinner"></i> Em Progresso</h5>
+            <h2>{{ progresso }}</h2>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-check"></i> Convertidos</h5>
-                <h2>{{ convertidos }}</h2>
-            </div>
+    <div class="stat-card text-white bg-success dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-check"></i> Convertidos</h5>
+            <h2>{{ convertidos }}</h2>
         </div>
     </div>
 </div>
