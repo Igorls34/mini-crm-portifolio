@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lead.nome }} - CRM{% endblock %}
+{% block page_title %}Detalhes do Lead{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>{{ lead.nome }}</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Nome:</dt>
+                    <dd class="col-sm-9">{{ lead.nome }}</dd>
+                    <dt class="col-sm-3">Telefone:</dt>
+                    <dd class="col-sm-9">{{ lead.telefone }}</dd>
+                    <dt class="col-sm-3">Email:</dt>
+                    <dd class="col-sm-9">{{ lead.email|default:"-" }}</dd>
+                    <dt class="col-sm-3">Curso de Interesse:</dt>
+                    <dd class="col-sm-9">{{ lead.curso_interesse }}</dd>
+                    <dt class="col-sm-3">Status:</dt>
+                    <dd class="col-sm-9"><span class="badge status-{{ lead.status }}">{{ lead.get_status_display }}</span></dd>
+                    <dt class="col-sm-3">Atendente:</dt>
+                    <dd class="col-sm-9">{% if lead.atendente %}{{ lead.atendente.username }}{% else %}-{% endif %}</dd>
+                    <dt class="col-sm-3">Data Criação:</dt>
+                    <dd class="col-sm-9">{{ lead.data_criacao|date:"d/m/Y H:i" }}</dd>
+                    <dt class="col-sm-3">Última Atualização:</dt>
+                    <dd class="col-sm-9">{{ lead.data_atualizacao|date:"d/m/Y H:i" }}</dd>
+                    <dt class="col-sm-3">Observações:</dt>
+                    <dd class="col-sm-9">{{ lead.observacoes|linebreaks }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Ações</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'leads:lead_edit' lead.pk %}" class="btn btn-warning w-100 mb-2"><i class="fas fa-edit"></i> Editar</a>
+                <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal" data-lead-name="{{ lead.nome }}"><i class="fas fa-trash"></i> Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de delete -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o lead "<strong>{{ lead.nome }}</strong>"?</p>
+                <p class="text-muted">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'leads:lead_delete' lead.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

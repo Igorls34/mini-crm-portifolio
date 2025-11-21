@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pipeline - CRM{% endblock %}
+{% block page_title %}Pipeline de Vendas{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% for status_key, status_data in kanban_data.items %}
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-columns"></i> {{ status_data.label }}
+                    <span class="badge bg-light text-dark ms-2">{{ status_data.leads|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body kanban-column" data-status="{{ status_key }}">
+                {% for lead in status_data.leads %}
+                <div class="card mb-2 lead-card" data-lead-id="{{ lead.pk }}" draggable="true">
+                    <div class="card-body p-3">
+                        <h6 class="card-title">
+                            <a href="{% url 'leads:lead_detail' lead.pk %}" class="text-decoration-none">
+                                {{ lead.nome }}
+                            </a>
+                        </h6>
+                        <p class="card-text small mb-1">
+                            <i class="fas fa-graduation-cap"></i> {{ lead.curso_interesse }}
+                        </p>
+                        {% if lead.atendente %}
+                        <p class="card-text small mb-1">
+                            <i class="fas fa-user"></i> {{ lead.atendente.get_full_name|default:lead.atendente.username }}
+                        </p>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-info">{{ lead.get_origem_display }}</span>
+                            <span class="badge
+                                {% if lead.prioridade == 'alta' %}bg-danger
+                                {% elif lead.prioridade == 'media' %}bg-warning
+                                {% else %}bg-success{% endif %}">
+                                {{ lead.get_prioridade_display }}
+                            </span>
+                        </div>
+                        {% if lead.probabilidade_fechamento %}
+                        <div class="mt-2">
+                            <small class="text-muted">Probabilidade: {{ lead.probabilidade_fechamento }}%</small>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     style="width: {{ lead.probabilidade_fechamento }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <small class="text-muted">{{ lead.data_criacao|date:"d/m/Y" }}</small>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p>Nenhum lead nesta etapa</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.kanban-column {
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.lead-card {
+    cursor: move;
+    transition: all 0.2s;
+}
+
+.lead-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.lead-card.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+.kanban-column.drag-over {
+    background-color: rgba(0, 123, 255, 0.1);
+    border: 2px dashed #007bff;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log('Pipeline template loaded');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded');
+
+    // Test if elements exist
+    const leadCards = document.querySelectorAll('.lead-card');
+    const kanbanColumns = document.querySelectorAll('.kanban-column');
+
+    console.log('Found lead cards:', leadCards.length);
+    console.log('Found kanban columns:', kanbanColumns.length);
+
+    if (leadCards.length === 0) {
+        console.error('No lead cards found!');
+        return;
+    }
+
+    if (kanbanColumns.length === 0) {
+        console.error('No kanban columns found!');
+        return;
+    }
+
+    let draggedElement = null;
+
+    // Drag start
+    leadCards.forEach((card, index) => {
+        console.log('Setting up drag events for card', index, 'with lead ID:', card.dataset.leadId);
+
+        card.addEventListener('dragstart', function(e) {
+            console.log('Drag started for lead:', this.dataset.leadId);
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        });
+
+        card.addEventListener('dragend', function(e) {
+            console.log('Drag ended for lead:', this.dataset.leadId);
+            this.classList.remove('dragging');
+            draggedElement = null;
+
+            // Remove drag-over class from all columns
+            kanbanColumns.forEach(col => col.classList.remove('drag-over'));
+        });
+    });
+
+    // Drag over
+    kanbanColumns.forEach((column, index) => {
+        console.log('Setting up drop events for column', index, 'with status:', column.dataset.status);
+
+        column.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        });
+
+        column.addEventListener('dragleave', function(e) {
+            if (!this.contains(e.relatedTarget)) {
+                this.classList.remove('drag-over');
+            }
+        });
+
+        // Drop
+        column.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            console.log('Drop event triggered on column with status:', this.dataset.status);
+
+            if (draggedElement) {
+                const leadId = draggedElement.dataset.leadId;
+                const newStatus = this.dataset.status;
+
+                console.log('Dropping lead', leadId, 'to status', newStatus);
+
+                // Check if CSRF token exists
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                console.log('CSRF token element:', csrfToken);
+                console.log('CSRF token value:', csrfToken ? csrfToken.value : 'NOT FOUND');
+
+                if (!csrfToken) {
+                    alert('CSRF token not found!');
+                    return;
+                }
+
+                // Send AJAX request to update lead status
+                fetch(`/leads/${leadId}/update-status/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken.value
+                    },
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        // Reload page to show updated pipeline
+                        location.reload();
+                    } else {
+                        alert('Erro ao atualizar status do lead: ' + (data.error || 'Erro desconhecido'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert('Erro ao atualizar status do lead: ' + error.message);
+                });
+            } else {
+                console.log('No dragged element found');
+            }
+        });
+    });
+
+    console.log('Drag and drop setup complete');
+});
+</script>
+{% endblock %}
