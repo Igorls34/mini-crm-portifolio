@@ -1,53 +1,213 @@
-# Mini CRM
+# Mini CRM - Sistema Completo de Gestão de Leads
 
-Um sistema de CRM simples desenvolvido em Django seguindo as melhores práticas de desenvolvimento profissional.
+Um sistema de CRM profissional desenvolvido em Django com interface moderna e funcionalidades avançadas para gestão completa de leads e pipeline de vendas.
 
-## Funcionalidades
+## 🚀 Funcionalidades Principais
 
-- **Autenticação Segura**: Login, logout e registro com proteção CSRF
-- **Dashboard Moderno**: Cards com estatísticas e gráfico Chart.js
-- **CRUD Completo de Leads**: Criar, listar, visualizar, editar e excluir
-- **Busca e Filtros**: Busca por nome/email, filtro por status, ordenação
-- **Paginação**: Lista de leads com paginação eficiente
-- **Interface Responsiva**: Bootstrap 5 com design profissional
-- **Interações Dinâmicas**: HTMX para melhor UX
-- **Mensagens de Feedback**: Sistema de mensagens com ícones
-- **Validação Completa**: Forms validados no backend
-- **Arquitetura Limpa**: Separação de responsabilidades, código modular
+### Autenticação e Autorização
+- **Sistema de Login Seguro**: Autenticação completa com proteção CSRF
+- **Controle de Acesso**: Grupos de usuários (Admin, Gestor, Atendente)
+- **Permissões Granulares**: Controle de acesso baseado em roles
 
-## Tecnologias
+### Dashboard Executivo
+- **Cards de Estatísticas**: Métricas em tempo real (total, novos, em progresso, convertidos)
+- **Gráficos Interativos**: Chart.js com visualizações de status e origem
+- **Interface Responsiva**: Design moderno com Bootstrap 5
 
-- **Backend**: Django 5+ com Python 3.13+
-- **Frontend**: Bootstrap 5, Font Awesome, HTMX, Chart.js
-- **Banco**: SQLite (desenvolvimento) / PostgreSQL (produção)
-- **Testes**: Faker para dados de teste
+### Gestão Completa de Leads
+- **CRUD Completo**: Criar, listar, visualizar, editar e excluir leads
+- **Campos Avançados**: Nome, telefone, email, curso, origem, prioridade, probabilidade, valor, observações
+- **Validação Completa**: Forms validados no backend com mensagens de erro
 
-## Instalação e Configuração
+### Pipeline Kanban
+- **Visualização Kanban**: Pipeline visual com colunas por status
+- **Drag & Drop**: Arrastar leads entre status com JavaScript
+- **Atualização em Tempo Real**: Mudanças salvas automaticamente
 
-### 1. Clonagem e Ambiente Virtual
+### Busca e Filtros Avançados
+- **Busca Inteligente**: Por nome, email ou curso de interesse
+- **Filtros Múltiplos**: Status, origem, prioridade, atendente, probabilidade, data
+- **Ordenação**: Por qualquer campo em ordem crescente/decrescente
+- **Paginação**: Navegação eficiente em listas grandes
+
+### Relatórios e Exportações
+- **Exportação Excel**: Arquivo XLSX formatado profissionalmente
+- **Exportação PDF**: Relatório em PDF com tabelas organizadas
+- **Filtros Aplicados**: Respeita todos os filtros ativos na exportação
+
+### Logs de Atividades
+- **Auditoria Completa**: Registro de todas as ações dos usuários
+- **Histórico Detalhado**: Data, usuário, ação e valores alterados
+- **Filtros de Log**: Busca por usuário, ação, período
+
+### API REST
+- **Django REST Framework**: API completa para integração
+- **Serializers**: Dados estruturados para consumo externo
+- **Autenticação**: Tokens para acesso seguro
+
+## 🛠️ Tecnologias Utilizadas
+
+### Backend
+- **Django 5.2.3**: Framework web robusto e escalável
+- **Python 3.13.3**: Última versão com performance otimizada
+- **SQLite**: Banco de dados para desenvolvimento
+- **PostgreSQL**: Recomendado para produção
+
+### Frontend
+- **Bootstrap 5**: Framework CSS responsivo e moderno
+- **Font Awesome**: Ícones vetoriais profissionais
+- **HTMX**: Interações dinâmicas sem JavaScript complexo
+- **Chart.js**: Gráficos interativos e responsivos
+
+### Bibliotecas Python
+- **ReportLab**: Geração de PDFs profissionais
+- **OpenPyXL**: Manipulação de arquivos Excel
+- **Pillow**: Processamento de imagens
+- **Faker**: Dados de teste realistas
+
+## 📋 Pré-requisitos
+
+- Python 3.8+
+- Pip (gerenciador de pacotes Python)
+- Git (para versionamento)
+
+## 🚀 Instalação e Configuração
+
+### 1. Clonagem do Repositório
 ```bash
-git clone <url-do-repo>
-cd mini-crm
+git clone https://github.com/Igorls34/mini-crm-portifolio.git
+cd mini-crm-portifolio
+```
+
+### 2. Ambiente Virtual
+```bash
+# Windows
 python -m venv .venv
-.venv\Scripts\activate  # Windows
+.venv\Scripts\activate
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Dependências
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configuração do Banco
+### 4. Configuração do Banco
 ```bash
 python manage.py migrate
-python manage.py createsuperuser  # Opcional
+python manage.py create_groups
 ```
 
-### 3. Dados de Teste
+### 5. Criar Superusuário (Opcional)
+```bash
+python manage.py createsuperuser
+```
+
+### 6. Dados de Teste
 ```bash
 python manage.py seed_leads --qtd 50
 ```
 
-### 4. Executar Servidor
+### 7. Executar Servidor
 ```bash
 python manage.py runserver
 ```
+
+Acesse: http://127.0.0.1:8000
+
+## 👥 Usuários de Teste
+
+Após executar `create_groups`, estarão disponíveis:
+
+- **Admin**: admin / admin123 (acesso total)
+- **Gestor**: gestor / gestor123 (gestão de leads)
+- **Atendente**: atendente / atendente123 (leads próprios)
+
+## 📊 Estrutura do Projeto
+
+```
+mini-crm/
+├── crm_project/          # Configurações Django
+├── leads/               # App principal
+│   ├── migrations/      # Migrações do banco
+│   ├── management/      # Comandos customizados
+│   ├── templates/       # Templates HTML
+│   └── static/          # CSS, JS, imagens
+├── static/              # Arquivos estáticos coletados
+├── templates/           # Templates base
+├── db.sqlite3          # Banco de dados (não versionado)
+└── manage.py           # Script de gerenciamento Django
+```
+
+## 🔧 Comandos Úteis
+
+```bash
+# Criar grupos de usuários
+python manage.py create_groups
+
+# Popular banco com dados de teste
+python manage.py seed_leads --qtd 100
+
+# Coletar arquivos estáticos
+python manage.py collectstatic
+
+# Executar testes
+python manage.py test
+
+# Verificar configurações
+python manage.py check
+```
+
+## 🌐 URLs Principais
+
+- `/` - Dashboard
+- `/leads/` - Lista de leads
+- `/leads/pipeline/` - Pipeline Kanban
+- `/leads/activity-logs/` - Logs de atividades
+- `/leads/export/xlsx/` - Exportar para Excel
+- `/leads/export/pdf/` - Exportar para PDF
+- `/api/` - API REST
+
+## 📈 Funcionalidades Avançadas
+
+### Pipeline Kanban
+- Interface visual intuitiva
+- Drag & drop entre colunas
+- Atualização automática de status
+- Logs de mudança de status
+
+### Sistema de Permissões
+- **Admin**: Acesso total ao sistema
+- **Gestor**: Gestão de todos os leads
+- **Atendente**: Apenas leads próprios
+
+### Exportações Inteligentes
+- Respeitam filtros aplicados
+- Formatação profissional
+- Dados completos incluindo observações
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova funcionalidade'`)
+4. Push para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+## 👨‍💻 Autor
+
+**Igor Silva** - [GitHub](https://github.com/Igorls34)
+
+---
+
+⭐ **Dê uma estrela se este projeto te ajudou!**
 
 Acesse: http://127.0.0.0.1:8000/
 
