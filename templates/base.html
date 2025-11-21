@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CRM">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>{% block title %}CRM{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Mobile-specific CSS -->
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}" media="(max-width: 768px)">
+    <!-- Preload background image for better performance -->
+    <link rel="preload" href="{% static 'images/background/background_crm.jpg' %}" as="image" media="(max-width: 768px)">
+</head>
+<body>
+    {% csrf_token %}
+
+    <!-- Sidebar Overlay para mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Modal de aviso para dispositivos móveis -->
+    <div class="modal fade" id="mobileWarningModal" tabindex="-1" aria-labelledby="mobileWarningModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-dark" id="mobileWarningModalLabel">
+                        <i class="fas fa-mobile-alt me-2"></i>Aviso sobre Experiência Mobile
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-desktop fa-3x text-primary"></i>
+                    </div>
+                    <p class="mb-3">
+                        <strong>Este sistema CRM foi otimizado para uso em desktops.</strong>
+                    </p>
+                    <p>
+                        Para uma melhor experiência e aproveitamento de todas as funcionalidades,
+                        recomendamos acessar o sistema através de um computador.
+                    </p>
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Você ainda pode usar o sistema em dispositivos móveis, mas algumas funcionalidades
+                            podem ter limitações na visualização.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        <i class="fas fa-check me-1"></i>Entendi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex">
+        {% include 'includes/_sidebar.html' %}
+
+        <!-- Main content -->
+        <div class="flex-grow-1 main-content" id="mainContent">
+            {% include 'includes/_navbar.html' %}
+
+            <!-- Content -->
+            <div class="container-fluid p-4">
+                {% include 'includes/_messages.html' %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

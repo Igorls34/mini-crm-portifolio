@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - CRM{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid fade-in">
+    <div class="stat-card text-white bg-primary dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-users"></i> Total de Leads</h5>
+            <h2>{{ total_leads }}</h2>
+        </div>
+    </div>
+    <div class="stat-card text-white bg-info dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-plus"></i> Novos</h5>
+            <h2>{{ novos }}</h2>
+        </div>
+    </div>
+    <div class="stat-card text-white bg-warning dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-spinner"></i> Em Progresso</h5>
+            <h2>{{ progresso }}</h2>
+        </div>
+    </div>
+    <div class="stat-card text-white bg-success dashboard-card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-check"></i> Convertidos</h5>
+            <h2>{{ convertidos }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-dollar-sign"></i> Ticket Médio</h5>
+                <h2>R$ {{ ticket_medio|floatformat:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chart-line"></i> Faturamento</h5>
+                <h2>R$ {{ faturamento_total|floatformat:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-trophy"></i> Top Atendentes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Atendente</th>
+                                <th>Convertidos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for atendente in atendente_ranking %}
+                            <tr>
+                                <td>{{ atendente.atendente__first_name }} {{ atendente.atendente__last_name|default:atendente.atendente__username }}</td>
+                                <td><span class="badge bg-success">{{ atendente.convertidos }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie"></i> Origem dos Leads</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="origemChart" data-labels="{{ origem_labels }}" data-data="{{ origem_data }}"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-donut"></i> Pipeline de Vendas</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="pipelineChart" data-labels="{{ status_labels }}" data-data="{{ status_data }}"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Últimos Leads</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Curso</th>
+                                <th>Origem</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lead in ultimos_leads %}
+                            <tr>
+                                <td><a href="{% url 'leads:lead_detail' lead.pk %}">{{ lead.nome }}</a></td>
+                                <td>{{ lead.curso_interesse }}</td>
+                                <td><span class="badge bg-info">{{ lead.get_origem_display }}</span></td>
+                                <td><span class="badge status-{{ lead.status }}">{{ lead.get_status_display }}</span></td>
+                                <td>{{ lead.data_criacao|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

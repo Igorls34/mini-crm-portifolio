@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}Leads - CRM{% endblock %}
+{% block page_title %}Leads{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Lista de Leads</h2>
+    <div>
+        <a href="{% url 'leads:export_xlsx' %}?{{ request.GET.urlencode }}" class="btn btn-outline-success me-2"><i class="fas fa-file-excel"></i> Exportar Excel</a>
+        <a href="{% url 'leads:export_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-outline-danger me-2"><i class="fas fa-file-pdf"></i> Exportar PDF</a>
+        <a href="{% url 'leads:lead_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Novo Lead</a>
+    </div>
+</div>
+
+<!-- Filtros -->
+<form method="get" class="mb-4">
+    <div class="row g-3">
+        <!-- Linha 1 -->
+        <div class="col-md-3">
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar por nome, telefone ou email">
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">Todos os status</option>
+                {% for status, label in status_choices %}
+                <option value="{{ status }}" {% if status_filter == status %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="origem" class="form-select">
+                <option value="">Todas as origens</option>
+                {% for origem, label in origem_choices %}
+                <option value="{{ origem }}" {% if origem_filter == origem %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="prioridade" class="form-select">
+                <option value="">Todas as prioridades</option>
+                {% for prioridade, label in prioridade_choices %}
+                <option value="{{ prioridade }}" {% if prioridade_filter == prioridade %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="atendente" class="form-select">
+                <option value="">Todos os atendentes</option>
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if atendente_filter == user.id|stringformat:"s" %}selected{% endif %}>{{ user.get_full_name|default:user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row g-3 mt-2">
+        <!-- Linha 2 -->
+        <div class="col-md-2">
+            <input type="number" name="prob_min" value="{{ prob_min }}" class="form-control" placeholder="Prob. min (%)" min="0" max="100">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="prob_max" value="{{ prob_max }}" class="form-control" placeholder="Prob. max (%)" min="0" max="100">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="data_inicial" value="{{ data_inicial }}" class="form-control" placeholder="Data inicial">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="data_final" value="{{ data_final }}" class="form-control" placeholder="Data final">
+        </div>
+        <div class="col-md-2">
+            <select name="order" class="form-select">
+                <option value="-data_criacao" {% if order_by == '-data_criacao' %}selected{% endif %}>Mais recentes</option>
+                <option value="data_criacao" {% if order_by == 'data_criacao' %}selected{% endif %}>Mais antigos</option>
+                <option value="nome" {% if order_by == 'nome' %}selected{% endif %}>Nome A-Z</option>
+                <option value="-nome" {% if order_by == '-nome' %}selected{% endif %}>Nome Z-A</option>
+                <option value="-probabilidade_fechamento" {% if order_by == '-probabilidade_fechamento' %}selected{% endif %}>Maior probabilidade</option>
+                <option value="probabilidade_fechamento" {% if order_by == 'probabilidade_fechamento' %}selected{% endif %}>Menor probabilidade</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-secondary w-100"><i class="fas fa-search"></i> Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<!-- Tabela -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Curso</th>
+                        <th>Origem</th>
+                        <th>Prioridade</th>
+                        <th>Probabilidade</th>
+                        <th>Atendente</th>
+                        <th>Status</th>
+                        <th>Data Criação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead in page_obj %}
+                    <tr>
+                        <td><a href="{% url 'leads:lead_detail' lead.pk %}">{{ lead.nome }}</a></td>
+                        <td>{{ lead.telefone }}</td>
+                        <td>{{ lead.email|default:"-" }}</td>
+                        <td>{{ lead.curso_interesse }}</td>
+                        <td><span class="badge bg-info">{{ lead.get_origem_display }}</span></td>
+                        <td>
+                            {% if lead.prioridade == 'alta' %}
+                                <span class="badge bg-danger">{{ lead.get_prioridade_display }}</span>
+                            {% elif lead.prioridade == 'media' %}
+                                <span class="badge bg-warning">{{ lead.get_prioridade_display }}</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ lead.get_prioridade_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ lead.probabilidade_fechamento }}%</td>
+                        <td>
+                            {% if lead.atendente %}
+                                {{ lead.atendente.get_full_name|default:lead.atendente.username }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td><span class="badge status-{{ lead.status }}">{{ lead.get_status_display }}</span></td>
+                        <td>{{ lead.data_criacao|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'leads:lead_edit' lead.pk %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ lead.pk }}" data-lead-name="{{ lead.nome }}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Paginação -->
+{% if page_obj.has_other_pages %}
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if origem_filter %}&origem={{ origem_filter }}{% endif %}{% if prioridade_filter %}&prioridade={{ prioridade_filter }}{% endif %}{% if atendente_filter %}&atendente={{ atendente_filter }}{% endif %}{% if prob_min %}&prob_min={{ prob_min }}{% endif %}{% if prob_max %}&prob_max={{ prob_max }}{% endif %}{% if data_inicial %}&data_inicial={{ data_inicial }}{% endif %}{% if data_final %}&data_final={{ data_final }}{% endif %}{% if order_by %}&order={{ order_by }}{% endif %}">Anterior</a></li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if origem_filter %}&origem={{ origem_filter }}{% endif %}{% if prioridade_filter %}&prioridade={{ prioridade_filter }}{% endif %}{% if atendente_filter %}&atendente={{ atendente_filter }}{% endif %}{% if prob_min %}&prob_min={{ prob_min }}{% endif %}{% if prob_max %}&prob_max={{ prob_max }}{% endif %}{% if data_inicial %}&data_inicial={{ data_inicial }}{% endif %}{% if data_final %}&data_final={{ data_final }}{% endif %}{% if order_by %}&order={{ order_by }}{% endif %}">{{ num }}</a></li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if origem_filter %}&origem={{ origem_filter }}{% endif %}{% if prioridade_filter %}&prioridade={{ prioridade_filter }}{% endif %}{% if atendente_filter %}&atendente={{ atendente_filter }}{% endif %}{% if prob_min %}&prob_min={{ prob_min }}{% endif %}{% if prob_max %}&prob_max={{ prob_max }}{% endif %}{% if data_inicial %}&data_inicial={{ data_inicial }}{% endif %}{% if data_final %}&data_final={{ data_final }}{% endif %}{% if order_by %}&order={{ order_by }}{% endif %}">Próximo</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+<!-- Modais de delete -->
+{% for lead in page_obj %}
+<div class="modal fade" id="deleteModal{{ lead.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o lead "<strong>{{ lead.nome }}</strong>"?</p>
+                <p class="text-muted">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'leads:lead_delete' lead.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

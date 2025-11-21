@@ -1,0 +1,134 @@
+<!-- Navbar aprimorada -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container-fluid px-2 px-md-3">
+        <!-- Mobile Menu Toggle -->
+        <div class="d-flex d-lg-none align-items-center">
+            <button class="btn btn-outline-secondary me-2 touch-target mobile-menu-toggle" type="button" id="sidebarToggle" aria-label="Abrir menu lateral">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Mobile User Menu -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary touch-target mobile-user-menu" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu do usuário">
+                    <i class="fas fa-user-circle fa-lg"></i>
+                    <span class="mobile-user-badge">{% if user.is_staff or user.is_superuser %}<i class="fas fa-crown text-warning ms-1"></i>{% endif %}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end mobile-user-dropdown">
+                    <li class="dropdown-header">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle fa-2x me-2 text-primary"></i>
+                            <div>
+                                <div class="fw-bold">{{ user.get_full_name|default:user.username }}</div>
+                                <small class="text-muted">{{ user.email|default:"" }}</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    {% if user.is_staff or user.is_superuser %}
+                    <li><a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog me-2"></i>Administração</a></li>
+                    {% endif %}
+                    <li><a class="dropdown-item" href="{% url 'leads:lead_list' %}"><i class="fas fa-users me-2"></i>Meus Leads</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:activity_logs' %}"><i class="fas fa-history me-2"></i>Atividades</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Desktop Sidebar Toggle -->
+        <button class="btn btn-outline-secondary d-none d-lg-inline me-3 touch-target" type="button" id="sidebarToggle" aria-label="Alternar menu lateral">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Brand / Title -->
+        <div class="navbar-brand-container flex-grow-1">
+            <span class="navbar-brand mb-0 h1">{{ block.super|default:"CRM" }}</span>
+            <!-- Breadcrumb para mobile -->
+            <nav aria-label="breadcrumb" class="d-lg-none ms-2">
+                <ol class="breadcrumb breadcrumb-mobile mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ block.super|default:"CRM" }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Desktop Actions -->
+        <div class="d-none d-lg-flex align-items-center">
+            <!-- Search Bar -->
+            <div class="navbar-search me-3">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" placeholder="Buscar leads..." aria-label="Buscar">
+                    <button class="btn btn-outline-secondary" type="button" aria-label="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="dropdown me-3">
+                <button class="btn btn-outline-secondary position-relative touch-target" type="button" data-bs-toggle="dropdown" aria-label="Notificações">
+                    <i class="fas fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" style="display: none;">
+                        <span class="visually-hidden">notificações não lidas</span>
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                    <li class="dropdown-header">Notificações</li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="text-center text-muted py-3">
+                        <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                        <div>Nenhuma notificação</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- User Menu -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary d-flex align-items-center touch-target" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle me-2"></i>
+                    <span class="d-none d-xl-inline">{{ user.get_full_name|default:user.username }}</span>
+                    {% if user.is_staff or user.is_superuser %}
+                    <i class="fas fa-crown text-warning ms-1"></i>
+                    {% endif %}
+                    <i class="fas fa-chevron-down ms-1"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end user-dropdown">
+                    <li class="dropdown-header">
+                        <div class="d-flex align-items-center p-2">
+                            <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
+                            <div>
+                                <div class="fw-bold">{{ user.get_full_name|default:user.username }}</div>
+                                <small class="text-muted">{{ user.email|default:"" }}</small>
+                                {% if user.is_staff or user.is_superuser %}
+                                <div class="badge bg-warning text-dark mt-1">Administrador</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:lead_list' %}"><i class="fas fa-users me-2"></i>Meus Leads</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:activity_logs' %}"><i class="fas fa-history me-2"></i>Histórico de Atividades</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:lead_pipeline' %}"><i class="fas fa-columns me-2"></i>Pipeline</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Sair do Sistema</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mobile Quick Actions -->
+        <div class="d-lg-none">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary touch-target mobile-quick-actions" type="button" data-bs-toggle="dropdown" aria-label="Ações rápidas">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end mobile-quick-menu">
+                    <li class="dropdown-header">Ações Rápidas</li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:lead_create' %}"><i class="fas fa-plus me-2"></i>Novo Lead</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:lead_list' %}"><i class="fas fa-users me-2"></i>Ver Leads</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leads:lead_pipeline' %}"><i class="fas fa-columns me-2"></i>Pipeline</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
