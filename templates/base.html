@@ -18,11 +18,15 @@
 </head>
 <body>
     {% csrf_token %}
+
+    <!-- Sidebar Overlay para mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="d-flex">
         {% include 'includes/_sidebar.html' %}
 
         <!-- Main content -->
-        <div class="flex-grow-1 main-content">
+        <div class="flex-grow-1 main-content" id="mainContent">
             {% include 'includes/_navbar.html' %}
 
             <!-- Content -->

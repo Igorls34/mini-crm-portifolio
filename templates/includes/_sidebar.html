@@ -1,21 +1,41 @@
 <!-- Sidebar -->
-<nav class="sidebar p-3" style="width: 250px;">
-    <h4 class="mb-4">CRM</h4>
+<nav class="sidebar p-3" id="sidebar">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">CRM</h4>
+        <button class="btn btn-outline-light btn-sm d-lg-none" id="sidebarClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
     <ul class="nav flex-column">
         <li class="nav-item mb-2">
-            <a href="{% url 'dashboard' %}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{% url 'dashboard' %}" class="nav-link">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="{% url 'leads:lead_list' %}" class="nav-link"><i class="fas fa-users"></i> Leads</a>
+            <a href="{% url 'leads:lead_list' %}" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span>Leads</span>
+            </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="{% url 'leads:lead_pipeline' %}" class="nav-link"><i class="fas fa-columns"></i> Pipeline</a>
+            <a href="{% url 'leads:lead_pipeline' %}" class="nav-link">
+                <i class="fas fa-columns"></i>
+                <span>Pipeline</span>
+            </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="{% url 'leads:activity_logs' %}" class="nav-link"><i class="fas fa-history"></i> Logs</a>
+            <a href="{% url 'leads:activity_logs' %}" class="nav-link">
+                <i class="fas fa-history"></i>
+                <span>Logs</span>
+            </a>
         </li>
-        <li class="nav-item mb-2">
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <li class="nav-item mb-2 d-lg-none">
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </li>
     </ul>
 </nav>
