@@ -1,1 +1,1 @@
-web: python manage.py collectstatic --noinput && python manage.py migrate && gunicorn crm_project.wsgi --log-file -
+web: python manage.py collectstatic --noinput && python manage.py migrate && python manage.py create_admin && gunicorn crm_project.wsgi --log-file -
