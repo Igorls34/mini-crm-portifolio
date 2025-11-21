@@ -2,7 +2,63 @@
 
 Um sistema de CRM profissional desenvolvido em Django com interface moderna e funcionalidades avançadas para gestão completa de leads e pipeline de vendas.
 
-## 🚀 Funcionalidades Principais
+## 🚀 Deploy no Railway
+
+### Pré-requisitos
+- Conta no [GitHub](https://github.com)
+- Conta no [Railway](https://railway.app)
+
+### Passo 1: Preparar o Repositório
+```bash
+# 1. Faça commit de todas as mudanças
+git add .
+git commit -m "Prepare for Railway deployment"
+
+# 2. Envie para o GitHub
+git push origin master
+```
+
+### Passo 2: Deploy no Railway
+1. Acesse [Railway.app](https://railway.app) e faça login
+2. Clique em "New Project"
+3. Selecione "Deploy from GitHub repo"
+4. Conecte sua conta do GitHub
+5. Selecione o repositório `mini-crm-portifolio`
+6. Clique em "Deploy"
+
+### Passo 3: Configurar Variáveis de Ambiente
+No painel do Railway, vá para "Variables" e adicione:
+
+```env
+SECRET_KEY=sua-chave-secreta-aqui
+DEBUG=False
+ALLOWED_HOSTS=seu-dominio-railway.app
+```
+
+### Passo 4: Configurar Banco de Dados
+1. No Railway, adicione um banco PostgreSQL ao projeto
+2. A variável `DATABASE_URL` será automaticamente configurada
+3. Execute as migrações (acontece automaticamente no deploy)
+
+### Passo 5: Acessar a Aplicação
+Após o deploy, você receberá uma URL como: `https://mini-crm-portifolio.up.railway.app`
+
+### Comandos Úteis
+```bash
+# Ver logs da aplicação
+railway logs
+
+# Executar migrações manualmente
+railway run python manage.py migrate
+
+# Criar superusuário
+railway run python manage.py createsuperuser
+
+# Coletar arquivos estáticos
+railway run python manage.py collectstatic --noinput
+```
+
+## 💡 Funcionalidades Principais
 
 ### Autenticação e Autorização
 - **Sistema de Login Seguro**: Autenticação completa com proteção CSRF
